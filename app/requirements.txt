@@ -33,6 +33,8 @@ scalar_fastapi==1.4.0
 sentry-sdk==2.37.1
 shellingham==1.5.4
 sniffio==1.3.1
+SQLAlchemy==2.0.43
+sqlmodel==0.0.24
 starlette==0.47.3
 typer==0.17.4
 typing-inspection==0.4.1
