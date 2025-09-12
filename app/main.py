@@ -17,16 +17,6 @@ async def lifespan_handler(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan_handler)
 
-shipments = {
-    12701: {"weight": 0.6, "content": "glassware", "status": "placed"},
-    12702: {"weight": 2.3, "content": "books", "status": "shipped"},
-    12703: {"weight": 1.1, "content": "electronics", "status": "delivered"},
-    12704: {"weight": 3.5, "content": "furniture", "status": "in_transit"},
-    12705: {"weight": 0.9, "content": "clothing", "status": "returned"},
-    12706: {"weight": 4.0, "content": "appliances", "status": "processing"},
-    12707: {"weight": 1.8, "content": "toys", "status": "placed"},
-}
-
 
 ### Read a shipment by id
 @app.get("/shipment", response_model=ShipmentRead)
@@ -38,7 +28,7 @@ def get_shipment(id: int, session: SessionDep):
             status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
         )
 
-    return shipments[id]
+    return shipment
 
 
 ### Create a new shipment with content and weight
