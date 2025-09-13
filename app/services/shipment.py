@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.schemas.shipment import ShipmentCreate, ShipmentUpdate
+from app.api.schemas.shipment import ShipmentCreate
 from app.database.models import Shipment, ShipmentStatus
 
 
@@ -25,7 +25,7 @@ class ShipmentService:
 
     return new_shipment
   
-  async def update(self, id: int, shipment_update: ShipmentUpdate) -> Shipment:
+  async def update(self, id: int, shipment_update: dict) -> Shipment:
     shipment = await self.get(id)
     shipment.sqlmodel_update(shipment_update)
 
@@ -35,6 +35,8 @@ class ShipmentService:
 
     return shipment
 
-  async def delete(self, id:int) -> None:
-    await self.session.delete(await self.get(id))
-    await self.session.commit()
+  async def delete(self, id: int) -> None:
+    shipment = await self.get(id)
+    if shipment is not None:
+      await self.session.delete(shipment)
+      await self.session.commit()

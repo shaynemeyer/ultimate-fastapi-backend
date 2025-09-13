@@ -12,6 +12,7 @@ class BaseShipment(BaseModel):
 
 
 class ShipmentRead(BaseShipment):
+    id: int
     status: ShipmentStatus
     estimated_delivery: datetime
 
