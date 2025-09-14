@@ -9,7 +9,7 @@ router = APIRouter(prefix="/shipment", tags=["Shipment"])
 
 ### Read a shipment by id
 @router.get("/", response_model=ShipmentRead)
-async def get_shipment(id: int, service: ShipmentServiceDep):
+async def get_shipment(id: int, _: SellerDep, service: ShipmentServiceDep):
     shipment = await service.get(id)
 
     if shipment is None:
@@ -23,7 +23,7 @@ async def get_shipment(id: int, service: ShipmentServiceDep):
 ### Create a new shipment with content and weight
 @router.post("/", response_model=ShipmentRead)
 async def submit_shipment(
-    seller: SellerDep, shipment: ShipmentCreate, service: ShipmentServiceDep
+    _: SellerDep, shipment: ShipmentCreate, service: ShipmentServiceDep
 ):
     return await service.add(shipment)
 

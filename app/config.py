@@ -8,17 +8,20 @@ _base_config = SettingsConfigDict(
 
 
 class DatabaseSettings(BaseSettings):
-  POSTGRES_SERVER: str 
-  POSTGRES_PORT: str
-  POSTGRES_USER: str
-  POSTGRES_PASSWORD: str
-  POSTGRES_DB: str
+    POSTGRES_SERVER: str
+    POSTGRES_PORT: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
 
-  model_config = _base_config
+    REDIS_HOST: str
+    REDIS_PORT: str
 
-  @property
-  def POSTGRES_URL(self):
-      return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+    model_config = _base_config
+
+    @property
+    def POSTGRES_URL(self):
+        return f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
 
 class SecuritySettings(BaseSettings):
