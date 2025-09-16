@@ -23,9 +23,9 @@ async def get_shipment(id: int, _: SellerDep, service: ShipmentServiceDep):
 ### Create a new shipment with content and weight
 @router.post("/", response_model=ShipmentRead)
 async def submit_shipment(
-    _: SellerDep, shipment: ShipmentCreate, service: ShipmentServiceDep
+    seller: SellerDep, shipment: ShipmentCreate, service: ShipmentServiceDep
 ):
-    return await service.add(shipment)
+    return await service.add(shipment, seller)
 
 
 ### Update fields of a shipment

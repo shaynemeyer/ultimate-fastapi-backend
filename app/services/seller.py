@@ -42,7 +42,7 @@ class SellerService:
             )
 
         token = generate_access_token(
-            data={"user": {"name": seller.name, "email": seller.email}}
+            data={"user": {"name": seller.name, "id": str(seller.id)}}
         )
 
         return token
