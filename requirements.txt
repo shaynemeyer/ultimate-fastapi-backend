@@ -1,3 +1,4 @@
+alembic==1.16.5
 annotated-types==0.7.0
 anyio==4.10.0
 asyncpg==0.30.0
@@ -11,12 +12,14 @@ fastapi-cli==0.0.11
 fastapi-cloud-cli==0.1.5
 greenlet==3.2.4
 h11==0.16.0
+hiredis==3.2.1
 httpcore==1.0.9
 httptools==0.6.4
 httpx==0.28.1
 idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.6
+Mako==1.3.10
 markdown-it-py==4.0.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
@@ -31,6 +34,7 @@ PyJWT==2.10.1
 python-dotenv==1.1.1
 python-multipart==0.0.20
 PyYAML==6.0.2
+redis==6.4.0
 rich==14.1.0
 rich-toolkit==0.15.1
 rignore==0.6.4
@@ -42,6 +46,7 @@ SQLAlchemy==2.0.43
 sqlmodel==0.0.24
 starlette==0.47.3
 typer==0.17.4
+types-passlib==1.7.7.20250602
 typing-inspection==0.4.1
 typing_extensions==4.15.0
 ujson==5.11.0
