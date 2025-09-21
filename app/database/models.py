@@ -46,8 +46,8 @@ class Shipment(SQLModel, table=True):
 
 
 class User(SQLModel):
-
     name: str
+
     email: EmailStr
     password_hash: str = Field(exclude=True)
 
