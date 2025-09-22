@@ -5,11 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.schemas.shipment import ShipmentCreate
 from app.database.models import Seller, Shipment, ShipmentStatus
 from app.services.base import BaseService
+from app.services.deliver_partner import DeliveryPartnerService
 
 
 class ShipmentService(BaseService):
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession, partner_service: DeliveryPartnerService):
         super().__init__(Shipment, session)
+        self.partner_service = partner_service
 
     async def get(self, id: UUID) -> Shipment | None:
         return await self._get(id)
@@ -21,6 +23,11 @@ class ShipmentService(BaseService):
             estimated_delivery=datetime.now() + timedelta(days=3),
             seller_id=seller.id,
         )
+
+        partner = await self.partner_service.assign_shipment(new_shipment)
+
+        # Add the delivery partner foreign key
+        new_shipment.delivery_partner_id = partner.id
 
         return await self._add(new_shipment)
 
