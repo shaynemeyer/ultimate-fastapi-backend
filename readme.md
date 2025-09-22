@@ -42,14 +42,20 @@ A comprehensive FastAPI backend application demonstrating modern Python web deve
 
 ## 📋 API Endpoints
 
-### Authentication
+### Seller Authentication
 - `POST /seller/signup` - Register new seller account
 - `POST /seller/token` - Login and receive JWT token
 - `GET /seller/logout` - Logout and blacklist token
 
+### Delivery Partner Authentication
+- `POST /partner/signup` - Register new delivery partner account
+- `POST /partner/token` - Login and receive JWT token
+- `POST /partner/` - Update delivery partner information
+- `GET /partner/logout` - Logout and blacklist token
+
 ### Shipment Management
-- `GET /shipment?id={id}` - Retrieve shipment details
-- `POST /shipment` - Create new shipment
+- `GET /shipment?id={id}` - Retrieve shipment details (requires authentication)
+- `POST /shipment` - Create new shipment (requires authentication)
 - `PATCH /shipment?id={id}` - Update shipment information
 - `DELETE /shipment?id={id}` - Delete shipment
 
@@ -65,9 +71,11 @@ app/
 │   ├── router.py          # Main router aggregation
 │   ├── routers/           # Individual route modules
 │   │   ├── seller.py      # Seller endpoints
+│   │   ├── delivery_partner.py # Delivery partner endpoints
 │   │   └── shipment.py    # Shipment endpoints
 │   └── schemas/           # Pydantic schemas
 │       ├── seller.py      # Seller request/response models
+│       ├── delivery_partner.py # Delivery partner request/response models
 │       └── shipment.py    # Shipment request/response models
 ├── core/                  # Core functionality
 │   └── security.py        # Security utilities
@@ -77,7 +85,9 @@ app/
 │   └── redis.py           # Redis connection and utilities
 ├── services/              # Business logic layer
 │   ├── seller.py          # Seller business logic
-│   └── shipment.py        # Shipment business logic
+│   ├── delivery_partner.py # Delivery partner business logic
+│   ├── shipment.py        # Shipment business logic
+│   └── user.py            # Base user business logic
 ├── config.py              # Configuration settings
 ├── main.py                # FastAPI application entry point
 └── utils.py               # Utility functions
@@ -193,27 +203,40 @@ alembic downgrade -1
 ```
 
 ### Testing Authentication
-1. Register a new seller via `POST /seller/signup`
-2. Login via `POST /seller/token` to receive JWT token
+1. Register a new seller via `POST /seller/signup` or delivery partner via `POST /partner/signup`
+2. Login via `POST /seller/token` or `POST /partner/token` to receive JWT token
 3. Use the token in the `Authorization: Bearer <token>` header for protected endpoints
 
 ## 📊 Data Models
 
-### Seller
-- **ID**: UUID primary key
-- **Name**: Seller's display name
+### User (Base Model)
+- **Name**: User's display name
 - **Email**: Unique email address (validated)
-- **Password**: Securely hashed password
+- **Password Hash**: Securely hashed password (excluded from serialization)
+
+### Seller (inherits from User)
+- **ID**: UUID primary key
+- **Created At**: Account creation timestamp
 - **Shipments**: One-to-many relationship with shipments
+
+### Delivery Partner (inherits from User)
+- **ID**: UUID primary key
+- **Created At**: Account creation timestamp
+- **Serviceable Zip Codes**: Array of serviceable zip codes
+- **Max Handling Capacity**: Maximum shipment handling capacity
+- **Shipments**: One-to-many relationship with assigned shipments
+- **Properties**: Active shipments count, current handling capacity
 
 ### Shipment
 - **ID**: UUID primary key
+- **Created At**: Shipment creation timestamp
 - **Content**: Description of shipment contents
 - **Weight**: Package weight (max 25kg)
-- **Destination**: Destination identifier
-- **Status**: Shipment status (placed, processing, in_transit, out_for_delivery, delivered, returned)
+- **Destination**: Destination zip code
+- **Status**: ShipmentStatus enum (placed, processing, in_transit, out_for_delivery, delivered, returned)
 - **Estimated Delivery**: Expected delivery datetime
 - **Seller**: Many-to-one relationship with seller
+- **Delivery Partner**: Many-to-one relationship with delivery partner
 
 ## 🔒 Security Features
 
