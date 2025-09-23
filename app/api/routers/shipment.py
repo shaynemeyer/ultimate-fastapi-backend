@@ -46,8 +46,9 @@ async def update_shipment(
     return await service.update(id, shipment_update, partner)
 
 
-@router.delete("/")
-async def delete_shipment(id: UUID, service: ShipmentServiceDep) -> dict[str, str]:
+### Cancel a shipment by id
+@router.get("/cancel", response_model=ShipmentRead)
+async def cancel_shipment(id: UUID, seller: SellerDep, service: ShipmentServiceDep):
     shipment = await service.get(id)
 
     if shipment is None:
@@ -55,6 +56,4 @@ async def delete_shipment(id: UUID, service: ShipmentServiceDep) -> dict[str, st
             status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
         )
 
-    await service.delete(id)
-
-    return {"detail": f"Shipment with id #{id} is deleted!"}
+    return await service.cancel(id, seller)

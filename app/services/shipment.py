@@ -46,6 +46,8 @@ class ShipmentService(BaseService):
             description=f"assigned to {partner.name}",
         )
 
+        shipment.timeline.append(event)
+
         return shipment
 
     async def update(
@@ -72,6 +74,28 @@ class ShipmentService(BaseService):
             await self.event_service.add(shipment=shipment, **update)
 
         return await self._update(shipment)
+
+    async def cancel(self, id: UUID, seller: Seller) -> Shipment:
+        # Validate seller
+        shipment = await self.get(id)
+
+        if shipment is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
+            )
+
+        if shipment.seller_id != seller.id:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Not Authorized"
+            )
+
+        event = await self.event_service.add(
+            shipment=shipment, status=ShipmentStatus.cancelled
+        )
+
+        shipment.timeline.append(event)
+
+        return shipment
 
     async def delete(self, id: UUID) -> None:
         shipment = await self.get(id)
