@@ -36,7 +36,7 @@ class Shipment(SQLModel, table=True):
         back_populates="shipment", sa_relationship_kwargs={"lazy": "selectin"}
     )
 
-    estimated_delivery: datetime
+    estimated_delivery: datetime | None
 
     seller_id: UUID = Field(foreign_key="seller.id")
     seller: "Seller" = Relationship(
@@ -47,6 +47,10 @@ class Shipment(SQLModel, table=True):
     delivery_partner: "DeliveryPartner" = Relationship(
         back_populates="shipments", sa_relationship_kwargs={"lazy": "selectin"}
     )
+
+    @property
+    def status(self):
+        return self.timeline[-1].status if len(self.timeline) > 0 else None
 
 
 class ShipmentEvent(SQLModel, table=True):

@@ -43,21 +43,7 @@ async def update_shipment(
             status_code=status.HTTP_400_BAD_REQUEST, detail="No data provided to update"
         )
 
-    # Validate logged in partner with assigned partner
-    # on the shipment with given id
-    shipment = await service.get(id)
-
-    if not shipment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
-        )
-
-    if shipment.delivery_partner_id != partner.id:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authorized"
-        )
-
-    return await service.update(shipment.sqlmodel_update(shipment_update))
+    return await service.update(id, shipment_update, partner)
 
 
 @router.delete("/")
