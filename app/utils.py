@@ -1,10 +1,14 @@
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi import HTTPException, status
 import jwt
 
 from app.config import security_settings
+
+APP_DIR = Path(__file__).resolve().parent
+TEMPLATE_DIR = APP_DIR / "templates"
 
 
 def generate_access_token(
