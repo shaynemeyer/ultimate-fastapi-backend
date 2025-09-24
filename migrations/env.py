@@ -9,7 +9,6 @@ from alembic import context
 from sqlmodel import SQLModel
 
 from app.config import db_settings
-from app.database.models import Shipment, Seller, DeliveryPartner
 
 
 # this is the Alembic Config object, which provides

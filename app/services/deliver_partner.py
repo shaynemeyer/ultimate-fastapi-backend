@@ -1,17 +1,20 @@
 from typing import Sequence
-from fastapi import HTTPException, status
+from fastapi import BackgroundTasks, HTTPException, status
 from sqlmodel import any_, select
 from app.api.schemas.delivery_partner import DeliveryPartnerCreate
 from app.database.models import DeliveryPartner, Shipment
 from app.services.user import UserService
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class DeliveryPartnerService(UserService):
-    def __init__(self, session):
-        super().__init__(DeliveryPartner, session)
+    def __init__(self, session: AsyncSession, tasks: BackgroundTasks):
+        super().__init__(DeliveryPartner, session, tasks)
 
     async def add(self, delivery_partner: DeliveryPartnerCreate):
-        return await self._add_user(delivery_partner.model_dump())
+        return await self._add_user(
+            delivery_partner.model_dump(), router_prefix="partner"
+        )
 
     async def get_partner_by_zipcode(self, zipcode: int) -> Sequence[DeliveryPartner]:
         return (

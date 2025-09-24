@@ -59,3 +59,10 @@ async def logout_delivery_partner(
 ):
     await add_jti_to_blacklist(token_data["jti"])
     return {"detail": "Successfully logged out!"}
+
+
+### Verify Seller Email
+@router.get("/verify")
+async def verify_delivery_partner_email(token: str, service: DeliveryPartnerServiceDep):
+    await service.verify_email(token)
+    return {"detail": "Account verified"}

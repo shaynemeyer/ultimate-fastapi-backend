@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status
+from fastapi import BackgroundTasks, HTTPException, status
 
 from app.services.user import UserService
 from app.utils import generate_access_token
@@ -15,11 +15,11 @@ password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class SellerService(UserService):
-    def __init__(self, session: AsyncSession):
-        super().__init__(Seller, session)
+    def __init__(self, session: AsyncSession, tasks: BackgroundTasks):
+        super().__init__(Seller, session, tasks)
 
     async def add(self, seller_create: SellerCreate) -> Seller:
-        return await self._add_user(seller_create.model_dump())
+        return await self._add_user(seller_create.model_dump(), router_prefix="seller")
 
     async def token(self, email, password) -> str:
         return await self._generate_token(email=email, password=password)

@@ -2,10 +2,14 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from uuid import uuid4
 
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
+
 from fastapi import HTTPException, status
 import jwt
 
 from app.config import security_settings
+
+_serializer = URLSafeTimedSerializer(security_settings.JWT_SECRET)
 
 APP_DIR = Path(__file__).resolve().parent
 TEMPLATE_DIR = APP_DIR / "templates"
@@ -38,4 +42,17 @@ def decode_access_token(token: str) -> dict | None:
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired token"
         )
     except jwt.PyJWTError:
+        return None
+
+
+def generate_url_safe_token(data: dict) -> str:
+    return _serializer.dumps(data)
+
+
+def decode_url_safe_token(token: str, expiry: timedelta | None = None) -> dict | None:
+    try:
+        return _serializer.loads(
+            token, max_age=int(expiry.total_seconds()) if expiry else None
+        )
+    except (BadSignature, SignatureExpired):
         return None

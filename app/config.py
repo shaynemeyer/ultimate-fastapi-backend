@@ -1,10 +1,15 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _base_config = SettingsConfigDict(
-    env_file="./.env",
+    env_file="../.env",
     env_ignore_empty=True,
     extra="ignore",
 )
+
+
+class AppSettings(BaseSettings):
+    APP_NAME: str = "FastShip"
+    APP_DOMAIN: str = "localhost:8000"
 
 
 class DatabaseSettings(BaseSettings):
@@ -48,6 +53,7 @@ class NotificationSettings(BaseSettings):
     model_config = _base_config
 
 
+app_settings = AppSettings()
 db_settings = DatabaseSettings()
 security_settings = SecuritySettings()
 notification_settings = NotificationSettings()
