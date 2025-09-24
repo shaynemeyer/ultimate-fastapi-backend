@@ -1,5 +1,7 @@
+from datetime import timedelta
 from uuid import UUID
 from fastapi import BackgroundTasks, HTTPException, status
+from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from passlib.context import CryptContext
@@ -12,6 +14,7 @@ from app.utils import (
     generate_url_safe_token,
 )
 from app.config import app_settings
+from app.config import security_settings
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -75,3 +78,40 @@ class UserService(BaseService):
         return generate_access_token(
             data={"user": {"name": user.name, "id": str(user.id)}}
         )
+
+    async def send_password_reset_link(self, email: EmailStr, router_prefix: str):
+        user = await self._get_by_email(email)
+
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+
+        token = generate_url_safe_token(
+            {"id": str(user.id)}, salt=security_settings.SECURITY_SALT
+        )
+
+        await self.notification_service.send_email_with_template(
+            recipients=[user.email],
+            subject="FastShip Account Password Reset",
+            context={
+                "username": user.name,
+                "reset_url": f"http://{app_settings.APP_DOMAIN}{router_prefix}/reset_password_form?token={token}",
+            },
+            template_name="mail_password_reset.html",
+        )
+
+    async def reset_password(self, token: str, password: str) -> bool:
+        token_data = decode_url_safe_token(
+            token, salt=security_settings.SECURITY_SALT, expiry=timedelta(days=1)
+        )
+
+        if not token_data:
+            return False
+
+        user = await self._get(UUID(token_data["id"]))
+        user.password_hash = password_context.hash(password)
+
+        await self._update(user)
+
+        return True

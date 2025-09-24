@@ -45,14 +45,16 @@ def decode_access_token(token: str) -> dict | None:
         return None
 
 
-def generate_url_safe_token(data: dict) -> str:
-    return _serializer.dumps(data)
+def generate_url_safe_token(data: dict, salt: str | None = None) -> str:
+    return _serializer.dumps(data, salt=salt)
 
 
-def decode_url_safe_token(token: str, expiry: timedelta | None = None) -> dict | None:
+def decode_url_safe_token(
+    token: str, salt: str | None = None, expiry: timedelta | None = None
+) -> dict | None:
     try:
         return _serializer.loads(
-            token, max_age=int(expiry.total_seconds()) if expiry else None
+            token, salt=salt, max_age=int(expiry.total_seconds()) if expiry else None
         )
     except (BadSignature, SignatureExpired):
         return None
