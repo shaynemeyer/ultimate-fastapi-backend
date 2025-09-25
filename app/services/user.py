@@ -7,7 +7,6 @@ from sqlalchemy import select
 from passlib.context import CryptContext
 from app.database.models import User
 from app.services.base import BaseService
-from app.services.notification import NotificationService
 from app.utils import (
     decode_url_safe_token,
     generate_access_token,
@@ -15,15 +14,15 @@ from app.utils import (
 )
 from app.config import app_settings
 from app.config import security_settings
+from app.worker.tasks import send_email_with_template
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class UserService(BaseService):
-    def __init__(self, model: User, session: AsyncSession, tasks: BackgroundTasks):
+    def __init__(self, model: User, session: AsyncSession):
         self.model = model
         self.session = session
-        self.notification_service = NotificationService(tasks)
 
     async def _add_user(self, data: dict, router_prefix: str) -> User:
         user = self.model(**data, password_hash=password_context.hash(data["password"]))
@@ -31,7 +30,7 @@ class UserService(BaseService):
 
         token = generate_url_safe_token({"email": user.email, "id": user.id})
 
-        await self.notification_service.send_email_with_template(
+        send_email_with_template(
             recipients=[user.email],
             subject="Verify Your Account With FastShip",
             context={
@@ -91,7 +90,7 @@ class UserService(BaseService):
             {"id": str(user.id)}, salt=security_settings.SECURITY_SALT
         )
 
-        await self.notification_service.send_email_with_template(
+        send_email_with_template(
             recipients=[user.email],
             subject="FastShip Account Password Reset",
             context={

@@ -15,8 +15,8 @@ password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class SellerService(UserService):
-    def __init__(self, session: AsyncSession, tasks: BackgroundTasks):
-        super().__init__(Seller, session, tasks)
+    def __init__(self, session: AsyncSession):
+        super().__init__(Seller, session)
 
     async def add(self, seller_create: SellerCreate) -> Seller:
         return await self._add_user(seller_create.model_dump(), router_prefix="seller")

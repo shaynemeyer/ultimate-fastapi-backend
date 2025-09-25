@@ -1,14 +1,13 @@
 from app.config import app_settings
 from app.database.models import Shipment, ShipmentEvent, ShipmentStatus
 from app.services.base import BaseService
-from app.services.notification import NotificationService
 from app.utils import generate_url_safe_token
+from app.worker.tasks import send_email_with_template
 
 
 class ShipmentEventService(BaseService):
-    def __init__(self, session, tasks):
+    def __init__(self, session):
         super().__init__(ShipmentEvent, session)
-        self.notification_service = NotificationService(tasks)
 
     async def add(
         self,
@@ -96,7 +95,7 @@ class ShipmentEventService(BaseService):
                 subject = "Your Order is Cancelled ❌"
                 template_name = "mail_cancelled.html"
 
-        await self.notification_service.send_email_with_template(
+        send_email_with_template(
             recipients=[shipment.client_contact_email],
             subject=subject,
             context=context,

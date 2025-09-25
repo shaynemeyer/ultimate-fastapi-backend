@@ -3,6 +3,7 @@ alembic==1.16.5
 amqp==5.3.1
 annotated-types==0.7.0
 anyio==4.10.0
+asgiref==3.9.2
 asyncpg==0.30.0
 bcrypt==4.3.0
 billiard==4.2.2
@@ -19,12 +20,14 @@ fastapi==0.116.1
 fastapi-cli==0.0.11
 fastapi-cloud-cli==0.1.5
 fastapi-mail==1.5.0
+flower==2.0.1
 greenlet==3.2.4
 h11==0.16.0
 hiredis==3.2.1
 httpcore==1.0.9
 httptools==0.6.4
 httpx==0.28.1
+humanize==4.13.0
 idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.6
@@ -36,6 +39,7 @@ mdurl==0.1.2
 orjson==3.11.3
 packaging==25.0
 passlib==1.7.4
+prometheus_client==0.23.1
 prompt_toolkit==3.0.52
 pydantic==2.11.7
 pydantic-extra-types==2.10.5
@@ -46,6 +50,7 @@ PyJWT==2.10.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-multipart==0.0.20
+pytz==2025.2
 PyYAML==6.0.2
 redis==6.4.0
 rich==14.1.0
@@ -59,6 +64,7 @@ sniffio==1.3.1
 SQLAlchemy==2.0.43
 sqlmodel==0.0.24
 starlette==0.47.3
+tornado==6.5.2
 typer==0.17.4
 types-passlib==1.7.7.20250602
 typing-inspection==0.4.1
