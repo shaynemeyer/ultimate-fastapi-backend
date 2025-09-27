@@ -3,7 +3,12 @@ from uuid import UUID
 from fastapi import APIRouter, Form, HTTPException, Request, status
 from fastapi.templating import Jinja2Templates
 
-from app.api.dependencies import DeliveryPartnerDep, SellerDep, ShipmentServiceDep
+from app.api.dependencies import (
+    DeliveryPartnerDep,
+    SellerDep,
+    SessionDep,
+    ShipmentServiceDep,
+)
 from app.api.schemas.shipment import (
     ShipmentCreate,
     ShipmentRead,
@@ -127,3 +132,10 @@ async def remove_tag_from_shipment(
     id: UUID, tag_name: TagName, service: ShipmentServiceDep
 ):
     return await service.remove_tag(id, tag_name)
+
+
+### Get all shipments with a tag
+@router.get("/tagged", response_model=list[ShipmentRead])
+async def get_shipments_with_tag(tag_name: TagName, session: SessionDep):
+    tag = await tag_name.tag(session)
+    return tag.shipments
