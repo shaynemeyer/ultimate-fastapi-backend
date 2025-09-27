@@ -10,6 +10,7 @@ from app.api.schemas.shipment import (
     ShipmentUpdate,
 )
 from app.config import app_settings
+from app.database.models import TagName
 from app.utils import TEMPLATE_DIR
 
 router = APIRouter(prefix="/shipment", tags=["Shipment"])
@@ -112,3 +113,17 @@ async def submit_review(
 ):
     await service.rate(token=token, rating=rating, comment=comment)
     return {"detail": "Review submitted"}
+
+
+### Add a tag to a shipment
+@router.get("/tag", response_model=ShipmentRead)
+async def add_tag_to_shipment(id: UUID, tag_name: TagName, service: ShipmentServiceDep):
+    return await service.add_tag(id, tag_name)
+
+
+### Remove a tag to a shipment
+@router.delete("/tag", response_model=ShipmentRead)
+async def remove_tag_from_shipment(
+    id: UUID, tag_name: TagName, service: ShipmentServiceDep
+):
+    return await service.remove_tag(id, tag_name)

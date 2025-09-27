@@ -3,7 +3,7 @@ from random import randint
 from uuid import UUID
 from pydantic import BaseModel, EmailStr, Field
 
-from app.database.models import Seller, ShipmentEvent, ShipmentStatus
+from app.database.models import Seller, ShipmentEvent, ShipmentStatus, Tag, TagName
 
 
 class BaseShipment(BaseModel):
@@ -12,11 +12,16 @@ class BaseShipment(BaseModel):
     destination: int
 
 
+class TagRead(BaseModel):
+    name: TagName
+    instruction: str
+
+
 class ShipmentRead(BaseShipment):
     id: UUID
-    seller: Seller
     timeline: list[ShipmentEvent]
     estimated_delivery: datetime
+    tags: list[Tag]
 
 
 class ShipmentCreate(BaseShipment):
