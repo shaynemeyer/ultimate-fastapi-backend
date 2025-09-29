@@ -15,6 +15,7 @@ from app.api.schemas.shipment import (
     ShipmentUpdate,
 )
 from app.config import app_settings
+from app.core.exceptions import EntityNotFound
 from app.database.models import TagName
 from app.utils import TEMPLATE_DIR
 
@@ -29,9 +30,7 @@ async def get_shipment(id: UUID, _: SellerDep, service: ShipmentServiceDep):
     shipment = await service.get(id)
 
     if shipment is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
-        )
+        raise EntityNotFound
 
     return shipment
 
@@ -42,9 +41,7 @@ async def get_tracking(request: Request, id: UUID, service: ShipmentServiceDep):
     shipment = await service.get(id)
 
     if shipment is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
-        )
+        raise EntityNotFound
 
     context = shipment.model_dump()
     context["status"] = shipment.status
@@ -76,9 +73,7 @@ async def update_shipment(
     update = shipment_update.model_dump(exclude_none=True)
 
     if not update:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No data provided to update"
-        )
+        raise EntityNotFound
 
     return await service.update(id, shipment_update, partner)
 
@@ -89,9 +84,7 @@ async def cancel_shipment(id: UUID, seller: SellerDep, service: ShipmentServiceD
     shipment = await service.get(id)
 
     if shipment is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Given id doesn't exist!"
-        )
+        raise EntityNotFound
 
     return await service.cancel(id, seller)
 

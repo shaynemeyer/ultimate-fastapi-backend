@@ -5,6 +5,7 @@ from pydantic import EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from passlib.context import CryptContext
+from app.core.exceptions import ClientNotVerified, EntityNotFound, InvalidToken
 from app.database.models import User
 from app.services.base import BaseService
 from app.utils import (
@@ -46,9 +47,7 @@ class UserService(BaseService):
         token_data = decode_url_safe_token(token)
         # Validate the token
         if not token_data:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
-            )
+            raise InvalidToken
 
         user = await self._get(UUID(token_data["id"]))
         user.email_verified = True
@@ -64,15 +63,10 @@ class UserService(BaseService):
         user = await self._get_by_email(email)
 
         if user is None or not password_context.verify(password, user.password_hash):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Email or password is incorrect",
-            )
+            raise EntityNotFound
 
         if not user.email_verified:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Email not verified"
-            )
+            raise ClientNotVerified
 
         return generate_access_token(
             data={"user": {"name": user.name, "id": str(user.id)}}
@@ -82,9 +76,7 @@ class UserService(BaseService):
         user = await self._get_by_email(email)
 
         if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
+            raise EntityNotFound
 
         token = generate_url_safe_token(
             {"id": str(user.id)}, salt=security_settings.SECURITY_SALT

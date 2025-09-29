@@ -8,6 +8,7 @@ from fastapi import HTTPException, status
 import jwt
 
 from app.config import security_settings
+from app.core.exceptions import ClientNotAuthorized
 
 _serializer = URLSafeTimedSerializer(security_settings.JWT_SECRET)
 
@@ -38,9 +39,7 @@ def decode_access_token(token: str) -> dict | None:
             algorithms=[security_settings.JWT_ALGORITHM],
         )
     except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Expired token"
-        )
+        raise ClientNotAuthorized
     except jwt.PyJWTError:
         return None
 

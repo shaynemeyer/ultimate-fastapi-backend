@@ -12,6 +12,7 @@ from app.api.schemas.delivery_partner import (
     DeliveryPartnerRead,
     DeliveryPartnerUpdate,
 )
+from app.core.exceptions import EntityNotFound
 from app.database.redis import add_jti_to_blacklist
 
 router = APIRouter(prefix="/partner", tags=["Delivery Partner"])
@@ -45,9 +46,7 @@ async def update_delivery_partner(
     update = partner_update.model_dump(exclude_none=True)
 
     if not update:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No data provided to update"
-        )
+        raise EntityNotFound
 
     return await service.update(partner.sqlmodel_update(update))
 
