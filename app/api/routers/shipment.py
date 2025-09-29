@@ -14,12 +14,13 @@ from app.api.schemas.shipment import (
     ShipmentRead,
     ShipmentUpdate,
 )
+from app.api.tag import APITag
 from app.config import app_settings
 from app.core.exceptions import EntityNotFound
 from app.database.models import TagName
 from app.utils import TEMPLATE_DIR
 
-router = APIRouter(prefix="/shipment", tags=["Shipment"])
+router = APIRouter(prefix="/shipment", tags=[APITag.SHIPMENT])
 
 templates = Jinja2Templates(TEMPLATE_DIR)
 

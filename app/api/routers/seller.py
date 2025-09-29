@@ -9,11 +9,12 @@ from app.api.dependencies import (
     get_seller_access_token,
 )
 from app.api.schemas.seller import SellerCreate, SellerRead
+from app.api.tag import APITag
 from app.config import app_settings
 from app.database.redis import add_jti_to_blacklist
 from app.utils import TEMPLATE_DIR
 
-router = APIRouter(prefix="/seller", tags=["Seller"])
+router = APIRouter(prefix="/seller", tags=[APITag.SELLER])
 
 
 ### Register a new seller
