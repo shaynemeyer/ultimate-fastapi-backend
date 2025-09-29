@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from scalar_fastapi import get_scalar_api_reference
 
 from app.core.exceptions import add_exception_handlers
@@ -14,6 +15,10 @@ async def lifespan_handler(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan_handler)
+
+app.add_middleware(
+    CORSMiddleware, allow_origins=["http://localhost:5500"], allow_methods=["*"]
+)
 
 app.include_router(master_router)
 add_exception_handlers(app)
