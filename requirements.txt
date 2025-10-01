@@ -29,6 +29,7 @@ httptools==0.6.4
 httpx==0.28.1
 humanize==4.13.0
 idna==3.10
+iniconfig==2.1.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 kombu==5.5.4
@@ -39,6 +40,7 @@ mdurl==0.1.2
 orjson==3.11.3
 packaging==25.0
 passlib==1.7.4
+pluggy==1.6.0
 prometheus_client==0.23.1
 prompt_toolkit==3.0.52
 pydantic==2.11.7
@@ -47,6 +49,7 @@ pydantic-settings==2.10.1
 pydantic_core==2.33.2
 Pygments==2.19.2
 PyJWT==2.10.1
+pytest==8.4.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
 python-multipart==0.0.20

@@ -9,7 +9,11 @@ from app.database.models import Seller, ShipmentEvent, ShipmentStatus, Tag, TagN
 class BaseShipment(BaseModel):
     content: str
     weight: float = Field(le=25, ge=1)
-    destination: int
+    destination: int = Field(
+        description="instead use location, location zipcode",
+        examples=[11001, 11002],
+        deprecated=True,
+    )
 
 
 class TagRead(BaseModel):
@@ -25,6 +29,8 @@ class ShipmentRead(BaseShipment):
 
 
 class ShipmentCreate(BaseShipment):
+    """Shipment details to create a new shipment"""
+
     client_contact_email: EmailStr
     client_contact_phone: int | None = Field(default=None)
 

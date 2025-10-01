@@ -37,7 +37,7 @@ async def get_shipment(id: UUID, _: SellerDep, service: ShipmentServiceDep):
 
 
 ### Tracking details of shipment
-@router.get("/track")
+@router.get("/track", include_in_schema=False)
 async def get_tracking(request: Request, id: UUID, service: ShipmentServiceDep):
     shipment = await service.get(id)
 
@@ -56,7 +56,39 @@ async def get_tracking(request: Request, id: UUID, service: ShipmentServiceDep):
 
 
 ### Create a new shipment with content and weight
-@router.post("/", response_model=ShipmentRead)
+@router.post(
+    "/",
+    response_model=ShipmentRead,
+    name="Create Shipment",
+    description="Create a new **shipment**",
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_201_CREATED: {
+            "description": "Shipment created",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "id": "33d05741-7fba-46da-aa1e-fc71b3303ddb",
+                        "status": "pending",
+                        "delivery_partner": {"id": 1, "name": "DHL"},
+                        "tracking_number": "1234567890",
+                        "origin": {
+                            "address": "123 Main St, City, Country",
+                            "postal_code": "12345",
+                        },
+                        "destination": {
+                            "address": "456 Elm St, City, Country",
+                            "postal_code": "67890",
+                        },
+                    }
+                }
+            },
+        },
+        status.HTTP_406_NOT_ACCEPTABLE: {
+            "description": "Delivery partner not available"
+        },
+    },
+)
 async def submit_shipment(
     seller: SellerDep, shipment: ShipmentCreate, service: ShipmentServiceDep
 ):
